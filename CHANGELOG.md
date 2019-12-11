@@ -1,5 +1,5 @@
 ## CARLA 0.9.7
-
+  * Updated README.md to add the forum and the developers group
   * Add build variant with AD RSS library integration with RSS sensor and result visualisation
   * Support for OpenGL and Vulkan in docker + headless mode
   * Added new sensor: Inertial measurement unit (IMU)
