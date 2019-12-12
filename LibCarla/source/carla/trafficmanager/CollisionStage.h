@@ -77,15 +77,15 @@ namespace traffic_manager {
     /// An object used for grid binning vehicles for faster proximity detection.
     VicinityGrid vicinity_grid;
     /// The map used to connect actor ids to the array index of data frames.
-    std::unordered_map<ActorId, uint> vehicle_id_to_index;
+    std::unordered_map<ActorId, uint64_t> vehicle_id_to_index;
     /// A structure used to keep track of actors spawned outside of traffic
     /// manager.
     std::unordered_map<ActorId, Actor> unregistered_actors;
     /// An object used to keep track of time between checking for all world
     /// actors.
-    chr::time_point<chr::_V2::system_clock, chr::nanoseconds> last_world_actors_pass_instance;
+    chr::time_point<chr::system_clock, chr::nanoseconds> last_world_actors_pass_instance;
     /// Number of vehicles registered with the traffic manager.
-    uint number_of_vehicles;
+    uint64_t number_of_vehicles;
 
     /// Returns the bounding box corners of the vehicle passed to the method.
     LocationList GetBoundary(const Actor &actor) const;

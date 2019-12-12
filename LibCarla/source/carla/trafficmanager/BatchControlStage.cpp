@@ -27,7 +27,7 @@ namespace traffic_manager {
   void BatchControlStage::Action() {
 
     // Looping over registered actors.
-    for (uint i = 0u; i < number_of_vehicles; ++i) {
+    for (uint64_t i = 0u; i < number_of_vehicles; ++i) {
 
       cr::VehicleControl vehicle_control;
 
@@ -51,7 +51,7 @@ namespace traffic_manager {
     if (data_frame != nullptr &&
         number_of_vehicles != (*data_frame.get()).size()) {
 
-      number_of_vehicles = static_cast<uint>((*data_frame.get()).size());
+      number_of_vehicles = static_cast<uint64_t>((*data_frame.get()).size());
       // Allocating array for command batching.
       commands = std::make_shared<std::vector<cr::Command>>(number_of_vehicles);
     }

@@ -13,7 +13,7 @@ namespace MapConstants {
   // Very important that this is less than 10^-4.
   static const float ZERO_LENGTH = 0.0001f;
   static const float INFINITE_DISTANCE = std::numeric_limits<float>::max();
-  static const uint LANE_CHANGE_LOOK_AHEAD = 5u;
+  static const uint64_t LANE_CHANGE_LOOK_AHEAD = 5u;
   // Cosine of the angle.
   static const float LANE_CHANGE_ANGULAR_THRESHOLD = 0.5f;
   static const float GRID_SIZE = 4.0f;
@@ -76,10 +76,10 @@ namespace MapConstants {
     }
 
     // Linking segments.
-    uint i = 0u, j = 0u;
+    uint64_t i = 0u, j = 0u;
     for (SimpleWaypointPtr end_point : exit_node_list) {
       for (SimpleWaypointPtr begin_point : entry_node_list) {
-        if (end_point->DistanceSquared(begin_point) < square(ZERO_LENGTH) and i != j) {
+        if (end_point->DistanceSquared(begin_point) < square(ZERO_LENGTH) && i != j) {
           end_point->SetNextWaypoint({begin_point});
         }
         ++j;
@@ -99,7 +99,7 @@ namespace MapConstants {
         SimpleWaypointPtr closest_connection;
         for (auto &begin_point : entry_node_list) {
           float new_distance = end_point->DistanceSquared(begin_point);
-          if (new_distance < min_distance and i != j) {
+          if (new_distance < min_distance && i != j) {
             min_distance = new_distance;
             closest_connection = begin_point;
           }
@@ -110,7 +110,7 @@ namespace MapConstants {
         relative_vector = relative_vector.MakeUnitVector();
         const float relative_dot = cg::Math::Dot(end_point_vector, relative_vector);
         if (relative_dot < LANE_CHANGE_ANGULAR_THRESHOLD) {
-          uint count = LANE_CHANGE_LOOK_AHEAD;
+          uint64_t count = LANE_CHANGE_LOOK_AHEAD;
           while (count > 0u) {
             closest_connection = closest_connection->GetNextWaypoint()[0];
             --count;

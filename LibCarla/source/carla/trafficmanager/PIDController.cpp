@@ -6,6 +6,8 @@
 
 #include "PIDController.h"
 
+#include <algorithm>
+
 namespace traffic_manager {
 
 namespace PIDControllerConstants {

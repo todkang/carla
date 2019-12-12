@@ -63,7 +63,7 @@ namespace PlannerConstants {
     const auto current_control_frame = frame_selector ? control_frame_a : control_frame_b;
 
     // Looping over all vehicles.
-    for (uint i = 0u; i < number_of_vehicles; ++i) {
+    for (uint64_t i = 0u; i < number_of_vehicles; ++i) {
 
       const LocalizationToPlannerData &localization_data = localization_frame->at(i);
       const Actor actor = localization_data.actor;
@@ -167,7 +167,7 @@ namespace PlannerConstants {
     if (localization_frame != nullptr &&
         number_of_vehicles != (*localization_frame.get()).size()) {
 
-      number_of_vehicles = static_cast<uint>((*localization_frame.get()).size());
+      number_of_vehicles = static_cast<uint64_t>((*localization_frame.get()).size());
       // Allocate output frames.
       control_frame_a = std::make_shared<PlannerToControlFrame>(number_of_vehicles);
       control_frame_b = std::make_shared<PlannerToControlFrame>(number_of_vehicles);

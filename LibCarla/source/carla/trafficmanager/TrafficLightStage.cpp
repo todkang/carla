@@ -10,7 +10,7 @@
 
 namespace traffic_manager {
 
-  static const uint NO_SIGNAL_PASSTHROUGH_INTERVAL = 5u;
+  static const uint64_t NO_SIGNAL_PASSTHROUGH_INTERVAL = 5u;
 
   TrafficLightStage::TrafficLightStage(
       std::string stage_name,
@@ -45,7 +45,7 @@ namespace traffic_manager {
     // Selecting the output frame based on the selection key.
     const auto current_planner_frame = frame_selector ? planner_frame_a : planner_frame_b;
     // Looping over registered actors.
-    for (uint i = 0u; i < number_of_vehicles; ++i) {
+    for (uint64_t i = 0u; i < number_of_vehicles; ++i) {
 
       bool traffic_light_hazard = false;
       const LocalizationToTrafficLightData &data = localization_frame->at(i);
@@ -158,7 +158,7 @@ namespace traffic_manager {
     if (localization_frame != nullptr &&
         number_of_vehicles != (*localization_frame.get()).size()) {
 
-      number_of_vehicles = static_cast<uint>((*localization_frame.get()).size());
+      number_of_vehicles = static_cast<uint64_t>((*localization_frame.get()).size());
       // Allocating output frames.
       planner_frame_a = std::make_shared<TrafficLightToPlannerFrame>(number_of_vehicles);
       planner_frame_b = std::make_shared<TrafficLightToPlannerFrame>(number_of_vehicles);
