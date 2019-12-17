@@ -19,7 +19,7 @@ namespace LocalizationConstants {
   static const float HIGHWAY_SPEED = 50 / 3.6f;
   static const float MINIMUM_LANE_CHANGE_DISTANCE = 20.0f;
   static const float MAXIMUM_LANE_OBSTACLE_CURVATURE = 0.93969f;
-  static const uint UNREGISTERED_ACTORS_SCAN_INTERVAL = 10;
+  static const uint64_t UNREGISTERED_ACTORS_SCAN_INTERVAL = 10;
 
 } // namespace LocalizationConstants
 
@@ -53,11 +53,6 @@ namespace LocalizationConstants {
     // Initializing the number of vehicles to zero in the begining.
     number_of_vehicles = 0u;
 
-    // Initializing messenger states to initiate data writes
-    // preemptively since this is the first stage in the pipeline.
-    planner_messenger_state = planner_messenger->GetState() - 1;
-    collision_messenger_state = collision_messenger->GetState() - 1;
-    traffic_light_messenger_state = traffic_light_messenger->GetState() - 1;
     // Initializing the registered actors container state.
     registered_actors_state = -1;
 
@@ -147,7 +142,7 @@ namespace LocalizationConstants {
         uint64_t selection_index = 0u;
         // Pseudo-randomized path selection if found more than one choice.
         if (next_waypoints.size() > 1) {
-          selection_index = static_cast<uint>(rand()) % next_waypoints.size();
+          selection_index = static_cast<uint64_t>(rand()) % next_waypoints.size();
         }
 
         PushWaypoint(waypoint_buffer, actor_id, next_waypoints.at(selection_index));
@@ -270,7 +265,7 @@ namespace LocalizationConstants {
     // Allocating new containers for the changed number of registered vehicles.
     if (number_of_vehicles != actor_list.size()) {
 
-      number_of_vehicles = static_cast<uint>(actor_list.size());
+      number_of_vehicles = static_cast<uint64_t>(actor_list.size());
       // Allocating the buffer lists.
       buffer_list = std::make_shared<BufferList>(number_of_vehicles);
       // Allocating output frames to be shared with the motion planner stage.
@@ -293,41 +288,23 @@ namespace LocalizationConstants {
     // which takes the most priority (which needs the highest rate of data feed)
     // to run the system well.
 
-    const DataPacket<std::shared_ptr<LocalizationToPlannerFrame>> planner_data_packet = {
-      planner_messenger_state,
-      planner_frame_selector ? planner_frame_a : planner_frame_b
-    };
+    planner_messenger->SendData(planner_frame_selector ? planner_frame_a : planner_frame_b);
     planner_frame_selector = !planner_frame_selector;
-    planner_messenger_state = planner_messenger->SendData(planner_data_packet);
 
     // Send data to collision stage only if it has finished
     // processing, received the previous message and started processing it.
     // int collision_messenger_current_state = collision_messenger->GetState();
     // if ((collision_messenger_current_state != collision_messenger_state) &&
     //     collision_frame_ready) {
-
-      const DataPacket<std::shared_ptr<LocalizationToCollisionFrame>> collision_data_packet = {
-          collision_messenger_state,
-          collision_frame_selector ? collision_frame_a : collision_frame_b
-        };
-
-      collision_messenger_state = collision_messenger->SendData(collision_data_packet);
-      collision_frame_selector = !collision_frame_selector;
-      collision_frame_ready = false;
+    collision_messenger->SendData(collision_frame_selector ? collision_frame_a : collision_frame_b);
+    collision_frame_selector = !collision_frame_selector;
+    collision_frame_ready = false;
     // }
 
     // Send data to traffic light stage only if it has finished
     // processing, received the previous message and started processing it.
-    const int traffic_light_messenger_current_state = traffic_light_messenger->GetState();
-    if (traffic_light_messenger_current_state != traffic_light_messenger_state) {
-      const DataPacket<std::shared_ptr<LocalizationToTrafficLightFrame>> traffic_light_data_packet = {
-          traffic_light_messenger_state,
-          traffic_light_frame_selector ? traffic_light_frame_a : traffic_light_frame_b
-        };
-
-      traffic_light_messenger_state = traffic_light_messenger->SendData(traffic_light_data_packet);
-      traffic_light_frame_selector = !traffic_light_frame_selector;
-    }
+    traffic_light_messenger->SendData(traffic_light_frame_selector ? traffic_light_frame_a : traffic_light_frame_b);
+    traffic_light_frame_selector = !traffic_light_frame_selector;
   }
 
   void LocalizationStage::DrawBuffer(Buffer &buffer) {

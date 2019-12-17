@@ -14,10 +14,11 @@ namespace std {
 
   WaypointHash::result_type WaypointHash::operator()(const argument_type &waypoint) const {
     WaypointHash::result_type seed = 0u;
-    boost::hash_combine(seed, waypoint.road_id);
-    boost::hash_combine(seed, waypoint.section_id);
-    boost::hash_combine(seed, waypoint.lane_id);
-    boost::hash_combine(seed, static_cast<float>(std::floor(waypoint.s * 200.0)));
+    size_t seedt = static_cast<size_t>(seed);
+    boost::hash_combine(seedt, waypoint.road_id);
+    boost::hash_combine(seedt, waypoint.section_id);
+    boost::hash_combine(seedt, waypoint.lane_id);
+    boost::hash_combine(seedt, static_cast<float>(std::floor(waypoint.s * 200.0)));
     return seed;
   }
 

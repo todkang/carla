@@ -18,8 +18,6 @@ namespace traffic_manager {
       carla_client(carla_client),
       world(carla_client.GetWorld()) {
 
-    // Initializing messenger state.
-    messenger_state = messenger->GetState();
     // Initializing number of vehicles to zero in the beginning.
     number_of_vehicles = 0u;
   }
@@ -45,15 +43,13 @@ namespace traffic_manager {
 
   void BatchControlStage::DataReceiver() {
 
-    auto packet = messenger->ReceiveData(messenger_state);
-    data_frame = packet.data;
-    messenger_state = packet.id;
-
+    messenger->ReceiveData(&data_frame);
+    
     // Allocating new containers for the changed number of registered vehicles.
     if (data_frame != nullptr &&
         number_of_vehicles != (*data_frame.get()).size()) {
 
-      number_of_vehicles = static_cast<uint>((*data_frame.get()).size());
+      number_of_vehicles = static_cast<uint64_t>((*data_frame.get()).size());
       // Allocating array for command batching.
       commands = std::make_shared<std::vector<cr::Command>>(number_of_vehicles);
     }

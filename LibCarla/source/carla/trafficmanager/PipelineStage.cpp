@@ -14,31 +14,52 @@ namespace traffic_manager {
       performance_diagnostics(PerformanceDiagnostics(stage_name)) {
 
     run_stage.store(true);
-    run_receiver.store(true);
-    run_action.store(false);
-    run_sender.store(false);
+    //run_receiver.store(true);
+    //run_action.store(false);
+    //run_sender.store(false);
   }
 
   PipelineStage::~PipelineStage() {}
 
   void PipelineStage::Start() {
 
-    data_receiver = std::make_unique<std::thread>(&PipelineStage::ReceiverThreadManager, this);
-    action_thread = std::make_unique<std::thread>(&PipelineStage::ActionThreadManager, this);
-    data_sender = std::make_unique<std::thread>(&PipelineStage::SenderThreadManager, this);
+    //data_receiver = std::make_unique<std::thread>(&PipelineStage::ReceiverThreadManager, this);
+    //action_thread = std::make_unique<std::thread>(&PipelineStage::ActionThreadManager, this);
+    //data_sender = std::make_unique<std::thread>(&PipelineStage::SenderThreadManager, this);
+    thread = std::make_unique<std::thread>(&PipelineStage::Update, this);
   }
 
   void PipelineStage::Stop() {
 
     run_stage.store(false);
-    data_receiver->join();
-    action_thread->join();
-    data_sender->join();
+    //data_receiver->join();
+    //action_thread->join();
+    //data_sender->join();
+    thread->join();
+  }
+
+  void PipelineStage::Update() {
+    while (run_stage.load()){
+      // Receive data.
+      //if (run_stage.load()) {
+        DataReceiver();
+      //}
+
+      // Receive data.
+      if (run_stage.load()) {
+        Action();
+      }
+
+      // Receive data.
+      if (run_stage.load()) {
+        DataSender();
+      }
+    }
   }
 
   void PipelineStage::ReceiverThreadManager() {
 
-    while (run_stage.load()) {
+    /*while (run_stage.load()) {
       std::unique_lock<std::mutex> lock(thread_coordination_mutex);
       // Wait for notification from sender thread and
       // break waiting if the stage is stopped.
@@ -56,12 +77,12 @@ namespace traffic_manager {
       // Notify action thread.
       run_action.store(true);
       wake_action_notifier.notify_one();
-    }
+    }*/
   }
 
   void PipelineStage::ActionThreadManager() {
 
-    while (run_stage.load()) {
+    /*while (run_stage.load()) {
       performance_diagnostics.RegisterUpdate();
 
       std::unique_lock<std::mutex> lock(thread_coordination_mutex);
@@ -86,12 +107,12 @@ namespace traffic_manager {
       // Notify sender.
       run_sender.store(true);
       wake_sender_notifier.notify_one();
-    }
+    }*/
   }
 
   void PipelineStage::SenderThreadManager() {
 
-    while (run_stage.load()) {
+    /*while (run_stage.load()) {
       std::unique_lock<std::mutex> lock(thread_coordination_mutex);
 
       // Wait for notification from action thread.
@@ -109,7 +130,7 @@ namespace traffic_manager {
       // Notify receiver.
       run_receiver.store(true);
       wake_receiver_notifier.notify_one();
-    }
+    }*/
   }
 
 } // namespace traffic_manager

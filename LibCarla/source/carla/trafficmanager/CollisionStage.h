@@ -55,9 +55,6 @@ namespace traffic_manager {
 
   private:
 
-    /// Variables to remember messenger states.
-    int localization_messenger_state;
-    int planner_messenger_state;
     /// Selection key for switching between output frames.
     bool frame_selector;
     /// Pointer to data received from localization stage.
@@ -73,7 +70,7 @@ namespace traffic_manager {
     /// Reference to Carla's debug helper object.
     cc::DebugHelper &debug_helper;
     /// The map used to connect actor ids to the array index of data frames.
-    std::unordered_map<ActorId, uint> vehicle_id_to_index;
+    std::unordered_map<ActorId, uint64_t> vehicle_id_to_index;
     /// An object used to keep track of time between checking for all world
     /// actors.
     chr::time_point<chr::system_clock, chr::nanoseconds> last_world_actors_pass_instance;

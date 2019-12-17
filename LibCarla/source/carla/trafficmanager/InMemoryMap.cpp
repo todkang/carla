@@ -257,7 +257,7 @@ namespace MapConstants {
           reference_waypoint->SetLeftWaypoint(closest_simple_waypoint);
         }
       }
-    } catch (const std::invalid_argument &e) {
+    } catch (const std::invalid_argument &) {
       cg::Location loc = reference_waypoint->GetLocation();
       carla::log_info(
           "Unable to link lane change connection at: "
