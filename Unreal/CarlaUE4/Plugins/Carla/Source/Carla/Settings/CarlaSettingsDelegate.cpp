@@ -71,10 +71,6 @@ void UCarlaSettingsDelegate::ApplyQualityLevelPostRestart()
   UWorld *InWorld = CarlaSettings->GetWorld();
 
   const EQualityLevel QualityLevel = CarlaSettings->GetQualityLevel();
-  if (AppliedLowPostResetQualityLevel == QualityLevel)
-  {
-    return;
-  }
 
   switch (QualityLevel)
   {
@@ -159,6 +155,11 @@ void UCarlaSettingsDelegate::CheckCarlaSettings(UWorld *world)
 
 void UCarlaSettingsDelegate::LaunchLowQualityCommands(UWorld *world) const
 {
+  if (!world)
+  {
+    return;
+  }
+
   // launch commands to lower quality settings
   GEngine->Exec(world, TEXT("r.DefaultFeature.MotionBlur 0"));
   GEngine->Exec(world, TEXT("r.DefaultFeature.Bloom 0"));
@@ -207,6 +208,7 @@ void UCarlaSettingsDelegate::LaunchLowQualityCommands(UWorld *world) const
   GEngine->Exec(world, TEXT("r.OcclusionQueryLocation 1"));
   // GEngine->Exec(world,TEXT("r.BasePassOutputsVelocity 0")); //--> readonly
   // GEngine->Exec(world,TEXT("r.DetailMode 0")); //-->will change to lods 0
+  GEngine->Exec(world, TEXT("ShowFlag.EyeAdaptation 1"));
 }
 
 void UCarlaSettingsDelegate::SetAllRoads(
@@ -357,6 +359,7 @@ void UCarlaSettingsDelegate::LaunchEpicQualityCommands(UWorld *world) const
   {
     return;
   }
+
   GEngine->Exec(world, TEXT("r.AmbientOcclusionLevels -1"));
   GEngine->Exec(world, TEXT("r.RHICmdBypass 1"));
   GEngine->Exec(world, TEXT("r.DefaultFeature.AntiAliasing 2"));
@@ -393,6 +396,7 @@ void UCarlaSettingsDelegate::LaunchEpicQualityCommands(UWorld *world) const
   // GEngine->Exec(world,TEXT("r.OcclusionQueryLocation 0"));
   // GEngine->Exec(world,TEXT("r.BasePassOutputsVelocity 0")); //readonly
   GEngine->Exec(world, TEXT("r.DetailMode 2"));
+  GEngine->Exec(world, TEXT("ShowFlag.EyeAdaptation 1"));
 }
 
 void UCarlaSettingsDelegate::SetAllLights(
